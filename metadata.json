@@ -1,0 +1,5 @@
+{
+  "name": "FridgeAgent",
+  "description": "Your proactive AI fridge sidekick that fights food waste.",
+  "requestFramePermissions": ["camera"]
+}
