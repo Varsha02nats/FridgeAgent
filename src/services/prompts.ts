@@ -38,16 +38,57 @@ If the user mentions consuming something, include a special JSON block in your r
 Always be helpful, encouraging, and focused on reducing food waste.
 `;
 
-export const RECIPE_PROMPT = (inventory: string) => `
+export const SMART_RECIPE_PROMPT = (inventory: string) => `
+You are FridgeAgent, a high-end AI culinary assistant.
 Based on the following fridge inventory:
 ${inventory}
 
-Suggest 3 recipes that use items expiring soon.
-For each recipe, provide:
-1. Name
-2. Ingredients used from fridge
-3. Missing ingredients
-4. Brief instructions
+Suggest 3 premium recipes that use the majority of pantry items.
+Rules:
+1. Prioritize ingredients expiring soon.
+2. Highlight how much of each ingredient will be used.
+3. Avoid suggesting ingredients not in pantry unless they are minor seasonings/substitutions.
+4. If a recipe uses an expiring ingredient, mark it as "isSmartChoice: true".
 
-Return as a JSON array.
+Return structured JSON:
+{
+  "recipes": [
+    {
+      "name": "string",
+      "cook_time_minutes": number,
+      "isSmartChoice": boolean,
+      "ingredients": [
+        {
+          "name": "string",
+          "amount_used": number,
+          "unit": "string",
+          "pantry_remaining_after": number
+        }
+      ],
+      "instructions": ["step 1", "step 2"]
+    }
+  ]
+}
+Only return the JSON.
+`;
+
+export const ALERT_GENERATOR_PROMPT = (item: string, daysLeft: number, category: string) => `
+You are FridgeAgent, a smart but playful roommate AI.
+Given:
+- Item name: ${item}
+- Days left: ${daysLeft}
+- Category: ${category}
+
+Generate:
+- A short playful alert message (max 60 words)
+- 2 quick recipe ideas if expiring soon
+- Or compost guidance if expired
+Tone: helpful, witty, never preachy.
+
+Return structured JSON:
+{
+  "message": "string",
+  "suggestions": ["suggestion 1", "suggestion 2"]
+}
+Only return the JSON.
 `;

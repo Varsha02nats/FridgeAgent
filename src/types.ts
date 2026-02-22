@@ -17,9 +17,27 @@ export interface Alert {
   message: string;
   itemId?: number;
   itemName?: string;
+  aiMessage?: string;
+  suggestions?: string[];
 }
 
 export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
+}
+
+export interface IngredientUsage {
+  name: string;
+  amount_used: number;
+  unit: string;
+  pantry_remaining_after?: number;
+}
+
+export interface Recipe {
+  id?: string;
+  name: string;
+  cook_time_minutes: number;
+  ingredients: IngredientUsage[];
+  instructions?: string[];
+  isSmartChoice?: boolean;
 }

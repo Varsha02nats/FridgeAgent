@@ -62,5 +62,40 @@ export const inventoryService = {
       return db.prepare('UPDATE items SET quantity = ?, last_updated = CURRENT_TIMESTAMP WHERE id = ?').run(newQty, item.id);
     }
     return null;
+  },
+
+  deductIngredients: (ingredients: { name: string, amount_used: number, unit: string }[]) => {
+    const results: { name: string, remaining: number, unit: string }[] = [];
+    
+    for (const ingredient of ingredients) {
+      const item: any = db.prepare('SELECT * FROM items WHERE name LIKE ?').get(`%${ingredient.name}%`);
+      
+      if (item) {
+        let amountToDeduct = ingredient.amount_used;
+        
+        // Simple intelligent unit conversion logic
+        // Example: if pantry has 'gallons' and recipe uses 'cups'
+        const pantryUnit = item.unit.toLowerCase();
+        const recipeUnit = ingredient.unit.toLowerCase();
+        
+        if (pantryUnit === 'gallons' && recipeUnit === 'cups') {
+          amountToDeduct = ingredient.amount_used / 16; // 16 cups in a gallon
+        } else if (pantryUnit === 'liters' && recipeUnit === 'ml') {
+          amountToDeduct = ingredient.amount_used / 1000;
+        } else if (pantryUnit === 'kg' && recipeUnit === 'grams') {
+          amountToDeduct = ingredient.amount_used / 1000;
+        }
+        
+        const newQty = Math.max(0, item.quantity - amountToDeduct);
+        db.prepare('UPDATE items SET quantity = ?, last_updated = CURRENT_TIMESTAMP WHERE id = ?').run(newQty, item.id);
+        
+        results.push({
+          name: item.name,
+          remaining: Number(newQty.toFixed(2)),
+          unit: item.unit
+        });
+      }
+    }
+    return results;
   }
 };

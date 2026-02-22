@@ -58,6 +58,16 @@ async function startServer() {
     }
   });
 
+  app.post('/api/inventory/deduct', (req, res) => {
+    try {
+      const { ingredients } = req.body;
+      const results = inventoryService.deductIngredients(ingredients);
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to deduct ingredients' });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

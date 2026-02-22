@@ -5,6 +5,7 @@ import SnapFridge from './screens/SnapFridge';
 import Chat from './screens/Chat';
 import Alerts from './screens/Alerts';
 import Shopping from './screens/Shopping';
+import Recipes from './screens/Recipes';
 import { ThemeProvider } from './context/ThemeContext';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -23,6 +24,8 @@ export default function App() {
         return <Alerts />;
       case 'shopping':
         return <Shopping />;
+      case 'recipes':
+        return <Recipes />;
       default:
         return <Dashboard onNavigate={setActiveTab} />;
     }
